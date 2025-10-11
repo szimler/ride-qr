@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Request a Ride with Sebastian</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .card-container { width: 100%; max-width: 450px; position: relative; }
+        
+        .qr-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .card-logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        
+        .tagline {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        
+        .qr-section {
+            margin-bottom: 30px;
+            background: #f7fafc;
+            padding: 30px 20px;
+            border-radius: 16px;
+        }
+        
+        .qr-section h2 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .qr-code-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            border: 3px solid #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .qr-code-wrapper img {
+            width: 280px;
+            height: 280px;
+            display: block;
+        }
+        
+        .qr-hint {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        .contact-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+        
+        .phone {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .website {
+            font-size: 16px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:active { transform: translateY(1px); }
+        
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-outline:active {
+            background: #f7f7f7;
+            transform: translateY(1px);
+        }
+        
+        .share-section {
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .share-text {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 12px;
+        }
+        
+        .share-buttons { display: flex; gap: 10px; }
+        
+        .share-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #cbd5e0;
+            background: #f7fafc;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:active {
+            background: #edf2f7;
+            transform: translateY(1px);
+        }
+        
+        .copy-confirmation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #48bb78;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .copy-confirmation.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(20px);
+        }
+        
+        .copy-confirmation.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .instructions-box {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #92400e;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instructions-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .qr-card { padding: 30px 20px; }
+            .card-title { font-size: 24px; }
+            .qr-code-wrapper img {
+                width: 220px;
+                height: 220px;
+            }
+            .phone { font-size: 20px; }
+            .btn {
+                font-size: 15px;
+                padding: 14px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="qr-card">
+            <div class="card-logo">🚕</div>
+            <h1 class="card-title">Request a Ride</h1>
+            <p class="tagline">Your Trusted Local Driver</p>
+
+            <div class="instructions-box">
+                <strong>📱 To Save This QR Code:</strong>
+                Long-press (tap & hold) the QR code below, then select "Save Image" or "Add to Photos"
+            </div>
+
+            <div class="qr-section">
+                <h2>Scan to Book Your Ride</h2>
+                <div class="qr-code-wrapper">
+                    <img src="data:image/png;base64,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" alt="QR Code - Request a Ride">
+                </div>
+                <p class="qr-hint">📱 Point your camera at the QR code</p>
+            </div>
+
+            <div class="contact-info">
+                <div class="phone">(714) 204-6318</div>
+                <div class="website">ride-request-app.onrender.com</div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="https://ride-request-app.onrender.com/" class="btn btn-primary">
+                    🚕 Request a Ride Now
+                </a>
+
+                <a href="tel:+17142046318" class="btn btn-outline">
+                    📞 Call Sebastian
+                </a>
+            </div>
+
+            <div class="share-section">
+                <p class="share-text">Share this card:</p>
+                <div class="share-buttons">
+                    <button class="share-btn" id="shareBtn">
+                        📤 Share
+                    </button>
+                    <button class="share-btn" id="copyLinkBtn">
+                        📋 Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="copyConfirmation" class="copy-confirmation hidden">
+            Copied to clipboard!
+        </div>
+    </div>
+
+    <script>
+        // Share functionality
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+            const shareData = {
+                title: 'Request a Ride with Sebastian',
+                text: 'Book a ride with Sebastian - Your trusted local driver!\n\nPhone: (714) 204-6318\nWebsite: ride-request-app.onrender.com',
+                url: 'https://ride-request-app.onrender.com/'
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    copyLink();
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    copyLink();
+                }
+            }
+        });
+
+        // Copy link functionality
+        document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
+
+        function copyLink() {
+            const url = 'https://ride-request-app.onrender.com/';
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showConfirmation('Link copied!');
+                }).catch(() => {
+                    fallbackCopy(url);
+                });
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            tempInput.style.position = 'fixed';
+            tempInput.style.opacity = '0';
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showConfirmation('Link copied!');
+            } catch (err) {
+                showConfirmation('Please copy manually');
+            }
+            
+            document.body.removeChild(tempInput);
+        }
+
+        function showConfirmation(message) {
+            const confirmation = document.getElementById('copyConfirmation');
+            confirmation.textContent = message;
+            confirmation.classList.remove('hidden');
+            confirmation.classList.add('show');
+            
+            setTimeout(() => {
+                confirmation.classList.remove('show');
+                setTimeout(() => confirmation.classList.add('hidden'), 300);
+            }, 2500);
+        }
+
+        console.log('✅ QR Card loaded successfully!');
+        console.log('📱 Long-press the QR code to save it to your phone');
+    </script>
+</body>
+</html>
