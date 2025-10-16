@@ -43,12 +43,22 @@
         }
 
         #qrcode {
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 30px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            margin: 0 auto 30px;
+            max-width: 460px;
+        }
+        
+        #qrImage {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            display: block;
         }
 
         .instructions {
@@ -91,15 +101,20 @@
             margin-bottom: 20px;
         }
 
-        /* Mobile optimization - 80% width on phone screens */
+        /* Mobile optimization - better sizing for phones */
         @media (max-width: 640px) {
             .qr-container {
                 width: 100%;
+                padding: 0 20px;
             }
 
             #qrcode {
-                width: 80%;
-                padding: 5%;
+                padding: 20px;
+                max-width: 300px;
+            }
+            
+            #qrImage {
+                max-width: 260px;
             }
 
             h1 {
@@ -108,6 +123,23 @@
 
             .subtitle {
                 font-size: 16px;
+            }
+            
+            .logo {
+                font-size: 40px;
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* Extra small phones */
+        @media (max-width: 375px) {
+            #qrcode {
+                padding: 15px;
+                max-width: 250px;
+            }
+            
+            #qrImage {
+                max-width: 220px;
             }
         }
     </style>
@@ -119,7 +151,7 @@
         <p class="subtitle">Scan to Request a Ride</p>
         
         <div id="qrcode">
-            <img id="qrImage" src="" alt="QR Code" style="width: 400px; height: 400px; display: block;">
+            <img id="qrImage" src="" alt="QR Code">
         </div>
         
         <p class="instructions">
